@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"time"
 
 	"github.com/clebersimm/grpc-go-aluno/pb/pb"
 	"google.golang.org/grpc"
@@ -18,7 +19,8 @@ func main() {
 	defer connection.Close()
 	client := pb.NewUserServiceClient(connection)
 	//AddUser(client)
-	AddUserVerbose(client)
+	//AddUserVerbose(client)
+	AddUsers(client)
 }
 
 func AddUser(client pb.UserServiceClient) {
@@ -57,4 +59,40 @@ func AddUserVerbose(client pb.UserServiceClient) {
 		fmt.Println("Status: ", stream.Status)
 	}
 
+}
+
+func AddUsers(client pb.UserServiceClient) {
+	reqs := []*pb.User{
+		&pb.User{
+			Id:    "1",
+			Name:  "Teste",
+			Email: "teste@teste.com",
+		},
+		&pb.User{
+			Id:    "2",
+			Name:  "2Teste",
+			Email: "2teste@teste.com",
+		},
+		&pb.User{
+			Id:    "3",
+			Name:  "3Teste",
+			Email: "3teste@teste.com",
+		},
+	}
+
+	stream, err := client.AddUsers(context.Background())
+	if err != nil {
+		log.Fatalf("Error creationg req: %v", err)
+	}
+
+	for _, req := range reqs {
+		stream.Send(req)
+		time.Sleep(time.Second * 3)
+	}
+
+	res, err := stream.CloseAndRecv()
+	if err != nil {
+		log.Fatalf("error receiving %v", err)
+	}
+	fmt.Println(res)
 }
