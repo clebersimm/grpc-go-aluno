@@ -4,8 +4,8 @@ import (
 	"log"
 	"net"
 
-	"github.com/clebersimm/fc2-grpc/pb"
-	"github.com/clebersimm/fc2-grpc/services"
+	"github.com/clebersimm/grpc-go-aluno/pb/pb"
+	"github.com/clebersimm/grpc-go-aluno/services"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
